@@ -7,7 +7,6 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class Wheel : MonoBehaviour
 {
-    public GameObject slotPrefab;
     public Vector2 startMoveSpeed = new Vector2(15f, 50f);// Initial speed at which the objects will move down
     public float snapThreshold = 0.1f; // Range around y = 0 to check for snapping
     public float snapSpeed = 0.2f;
@@ -39,7 +38,7 @@ public class Wheel : MonoBehaviour
 
         foreach (AdditionalSlot mod in slots)
         {
-            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity, transform);
+            var newSymbol = Instantiate(mod.prefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity, transform);
             newSymbol.GetComponent<SlotItem>().Initialize(mod);
             AddSymbol(newSymbol);
         }
@@ -59,12 +58,6 @@ public class Wheel : MonoBehaviour
             currentMoveSpeed = GetRandomSpeed();
             setSpeed = currentMoveSpeed;
             StartCoroutine(SpinAndSlowDown());
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {            
-            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity);
-            AddSymbol(newSymbol);
         }
 
         if (isSpinning)

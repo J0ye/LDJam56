@@ -22,5 +22,5 @@ public class SlotItem : MonoBehaviour
     {
         _slot = slot;
         GetComponent<SpriteRenderer>().sprite = _slot.image;
-    }
+    } 
 }
