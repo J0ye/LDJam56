@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Mods", order = 1)]
+[CreateAssetMenu(fileName = "Multiplicator", menuName = "Multiplicator", order = 1)]
 public class Multiplicator : SlotMod
 {
-    public override int INEEDMONEY(IEnumerable<SlotMod> mods)
+    public override string GetType()
     {
-        return mods.Count();
+        return "multiplicator";
     }
+
+    public int INEEDMONEY(IEnumerable<SlotMod> mods) { return 0; }
 }

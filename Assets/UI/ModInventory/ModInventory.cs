@@ -10,6 +10,9 @@ public class ModInventory : MonoBehaviour
     [SerializeField]
     ModInventoryElement _modGridElementPrefab;
 
+    [SerializeField]
+    List<SlotMod> _mods = new List<SlotMod>();
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -22,6 +25,8 @@ public class ModInventory : MonoBehaviour
         {
             instance = this;
         }
+
+        gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update
@@ -35,6 +40,18 @@ public class ModInventory : MonoBehaviour
     {
         
     }
+    
+    /// <summary>
+    /// Return all mods
+    /// </summary>
+    /// <returns></returns>
+    public List<SlotMod> GetMods() => _mods;
+
+    public void AddMod(SlotMod mod)
+    {
+        _mods.Add(mod);
+        ModInventory.instance.UpdateUI();
+    }
 
     public void UpdateUI()
     {
@@ -45,7 +62,7 @@ public class ModInventory : MonoBehaviour
         }
 
         // Add all back
-        foreach (var mod in ModManager.instance.GetMods())
+        foreach (var mod in GetMods())
         {
             var modGridElement = Instantiate(_modGridElementPrefab, transform);
             modGridElement.Initialize(mod);
