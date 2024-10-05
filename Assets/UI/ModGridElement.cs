@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class ModGridElement : MonoBehaviour
 {
+    SlotMod _mod;
+
     [SerializeField]
-    Image modImage;
+    Image image;
 
     // Start is called before the first frame update
     void Start()
@@ -19,4 +21,12 @@ public class ModGridElement : MonoBehaviour
     {
         
     }
+
+    public void Initialize(SlotMod mod)
+    {
+        _mod = mod;
+        image.sprite = mod.image;
+    }
+
+    public SlotMod GetMod() => _mod;
 }

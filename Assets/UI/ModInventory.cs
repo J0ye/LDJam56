@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ModInventory : MonoBehaviour
 {
+    [SerializeField]
+    ModGridElement _modGridElementPrefab;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +29,10 @@ public class ModInventory : MonoBehaviour
         }
 
         // Add all back
-        //ModManager.Get
+        foreach (var mod in ModManager.instance.GetMods())
+        {
+            var modGridElement = Instantiate(_modGridElementPrefab, transform);
+            modGridElement.Initialize(mod);
+        }
     }
 }

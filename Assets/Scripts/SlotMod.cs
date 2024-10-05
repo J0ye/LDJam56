@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlotMod : MonoBehaviour
+public enum SlotModType
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    Test
+}
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(fileName = "Mods", order = 1)]
+public class SlotMod : ScriptableObject
+{
+    public SlotModType type;
+    public string name;
+    public string description;
+    public Sprite image;
 }
