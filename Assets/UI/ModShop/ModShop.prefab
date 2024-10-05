@@ -115,4 +115,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _prefab: {fileID: 276293224352974230, guid: 00cd494b5b131ee47ae737899bc99951, type: 3}
   _availableMods:
-  - {fileID: 11400000, guid: 91f51e9a5712bf1449dd9aaf2f119092, type: 2}
+  - {fileID: 11400000, guid: 804d96872c6f79b48a7d4cfa0792d062, type: 2}

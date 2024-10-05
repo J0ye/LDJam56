@@ -32,7 +32,7 @@ public class ModShopElement : MonoBehaviour
 
     public void BuyMod()
     {
-        ModManager.instance.AddMod(_mod);
+        ModInventory.instance.AddMod(_mod);
         GetComponent<Button>().interactable = false;
     }
 }

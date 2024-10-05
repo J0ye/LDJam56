@@ -2,16 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SlotModType
+public abstract class SlotMod : ScriptableObject
 {
-    Test
-}
-
-[CreateAssetMenu(fileName = "Mods", order = 1)]
-public class SlotMod : ScriptableObject
-{
-    public SlotModType type;
     public string name;
     public string description;
     public Sprite image;
+
+    public abstract string GetType();
 }

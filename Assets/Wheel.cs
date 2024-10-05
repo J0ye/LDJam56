@@ -1,24 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Wheel : MonoBehaviour
 {
-    public GameObject testPrefab;
-    public List<GameObject> symbols = new List<GameObject>();
+    public GameObject slotPrefab;
     public Vector2 startMoveSpeed = new Vector2(15f, 50f);// Initial speed at which the objects will move down
     public float snapThreshold = 0.1f; // Range around y = 0 to check for snapping
     public float snapSpeed = 0.2f;
     public float smoothMoveDuration = 1.0f; // Duration for smooth movement
 
+    private List<GameObject> symbols = new List<GameObject>();
     private List<Vector3> initialPositions = new List<Vector3>(); // New list to store initial positions
     private float currentMoveSpeed; // Current speed during the spin
     private float setSpeed;
-    private float resetLimit = -6f;
+    private float resetLimit = 2;
     private bool isSpinning = false; // Flag to check if spinning is active
     private bool symbolsSnap = false;
-
-
 
     void Start()
     {
@@ -27,6 +28,20 @@ public class Wheel : MonoBehaviour
         foreach (GameObject symbol in symbols)
         {
             initialPositions.Add(symbol.transform.position);
+        }
+
+        var rnd = new System.Random();
+
+        var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "slot").ToList();
+        //slots = Shuffle(slots).ToList();
+
+        resetLimit = Mathf.RoundToInt(slots.Count / 2) * 2;
+
+        foreach (AdditionalSlot mod in slots)
+        {
+            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity, transform);
+            newSymbol.GetComponent<SlotItem>().Initialize(mod);
+            AddSymbol(newSymbol);
         }
     }
     
@@ -48,8 +63,8 @@ public class Wheel : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {            
-            GameObject newSymbol = Instantiate(testPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity);
-            AddSymbole(newSymbol);
+            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity);
+            AddSymbol(newSymbol);
         }
 
         if (isSpinning)
@@ -65,20 +80,20 @@ public class Wheel : MonoBehaviour
             foreach(GameObject symbol in symbols)
             {            
                 // Reset position if y is -6 or smaller
-                if (symbol.transform.position.y <= resetLimit)
+                if (symbol.transform.position.y < resetLimit)
                 {
-                    symbol.transform.position = new Vector3(symbol.transform.position.x, 6, symbol.transform.position.z);
+                    symbol.transform.position = new Vector3(symbol.transform.position.x, resetLimit * -1, symbol.transform.position.z);
                 }
             }
         }
     }
 
     // New function to set a GameObject at the lowest position y above the reset limit
-    public void AddSymbole(GameObject obj)
+    public void AddSymbol(GameObject obj)
     {
         float startLimit = resetLimit;
         resetLimit = resetLimit - 2; // Extended limit
-        obj.transform.position = new Vector3 (transform.position.x, startLimit, transform.position.z);
+        obj.transform.position = new Vector3(transform.position.x, startLimit, transform.position.z);
         symbols.Add(obj);
         initialPositions.Add(obj.transform.position);
     }
@@ -136,7 +151,9 @@ public class Wheel : MonoBehaviour
         {
             if (symbols[i] != closestSymbol)
             {
-                targetPositions[i] = new Vector3(symbols[i].transform.position.x, Mathf.Round(symbols[i].transform.position.y - distanceToSnap), symbols[i].transform.position.z);
+                //int nearestMultiple = (int)System.Math.Round(( / (double)2), System.MidpointRounding.AwayFromZero) * 2;
+                int nearest = Mathf.RoundToInt((symbols[i].transform.position.y - distanceToSnap) / 2) * 2;
+                targetPositions[i] = new Vector3(symbols[i].transform.position.x, nearest, symbols[i].transform.position.z);
             }
             else
             {
@@ -167,5 +184,25 @@ public class Wheel : MonoBehaviour
     private float GetRandomSpeed()
     {
         return Random.Range(startMoveSpeed.x, startMoveSpeed.y);
+    }
+
+
+    private IList<T> Shuffle<T>(IList<T> list)
+    {
+        //var newList = list.Select(item => (T)item.Clone()).ToList();
+
+        System.Random rng = new System.Random();
+
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+
+        return list;
     }
 }
