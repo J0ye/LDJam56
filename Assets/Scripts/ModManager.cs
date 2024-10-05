@@ -32,5 +32,6 @@ public class ModManager : MonoBehaviour
     public void AddMod(SlotMod mod)
     {
         _mods.Add(mod);
+        ModInventory.instance.UpdateUI();
     }
 }

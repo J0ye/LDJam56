@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ModGridElement : MonoBehaviour
+public class ModShopElement : MonoBehaviour
 {
     SlotMod _mod;
 
@@ -29,4 +29,10 @@ public class ModGridElement : MonoBehaviour
     }
 
     public SlotMod GetMod() => _mod;
+
+    public void BuyMod()
+    {
+        ModManager.instance.AddMod(_mod);
+        GetComponent<Button>().interactable = false;
+    }
 }

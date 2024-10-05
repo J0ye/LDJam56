@@ -5,8 +5,24 @@ using UnityEngine.UI;
 
 public class ModInventory : MonoBehaviour
 {
+    public static ModInventory instance { get; private set; }
+
     [SerializeField]
-    ModGridElement _modGridElementPrefab;
+    ModInventoryElement _modGridElementPrefab;
+
+    private void Awake()
+    {
+        // If there is an instance, and it's not me, delete myself.
+
+        if (instance != null && instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +36,7 @@ public class ModInventory : MonoBehaviour
         
     }
 
-    public void UpdateMods()
+    public void UpdateUI()
     {
         // Delete all existing
         foreach (Transform child in transform)
