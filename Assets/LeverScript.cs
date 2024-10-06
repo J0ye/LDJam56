@@ -8,6 +8,8 @@ public class LeverScript : MonoBehaviour
     private bool isLeverDown = false;
     public float targetAngle = 45f; // Target angle for rotation
     public float rotationSpeed = 5f; // Speed of rotation
+    [HideInInspector]
+    public int cost = 2;
 
     public UnityEvent onLeverPulledDown = new UnityEvent();
 
@@ -19,8 +21,9 @@ public class LeverScript : MonoBehaviour
 
     void OnMouseDown()
     {
-        if(isLeverDown == false)
+        if(isLeverDown == false && SlotMachineManager.Instance.score > cost)
         {
+            SlotMachineManager.Instance.score -= cost;
             isLeverDown = true;
             StartCoroutine(RotateLever());
         }
@@ -53,7 +56,7 @@ public class LeverScript : MonoBehaviour
         }
 
         // Check if the lever is close to the target rotation before invoking the event
-        if (Quaternion.Angle(transform.rotation, targetRotation) < 10f) // Threshold of 1 degree
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 5f) // Threshold
         {
             onLeverPulledDown.Invoke();
         }
