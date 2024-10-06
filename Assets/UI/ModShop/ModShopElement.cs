@@ -81,7 +81,13 @@ public class ModShopElement : MonoBehaviour
     public void BuyMod()
     {
         ModInventory.instance.AddMod(_mod);
-        button.interactable = false;
+        EnableButton(false);
         SlotMachineManager.Instance.CostToSpin += _mod.drawback;
+        ModShop.instance.CheckModCost();
+    }
+
+    public void EnableButton(bool state)
+    {
+        button.interactable = state;
     }
 }

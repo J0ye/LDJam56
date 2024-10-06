@@ -13,6 +13,9 @@ public class ModShop : MonoBehaviour
     [SerializeField]
     List<SlotMod> _availableMods;
 
+    [SerializeField]
+    Button refreshButton;
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -53,11 +56,49 @@ public class ModShop : MonoBehaviour
             var modShopElement = Instantiate(_prefab, transform);
             modShopElement.Initialize(slotMod);
         }
+
+        CheckModCost();
     }
 
     private SlotMod GetRandomMod()
     {
         return _availableMods[Random.Range(0, _availableMods.Count)];
+    }
+
+    public void RefreshShop()
+    {
+        if (SlotMachineManager.Instance.score -1 > SlotMachineManager.Instance.CostToSpin)
+        {
+            SlotMachineManager.Instance.score -= 1;
+            GenerateRandomMods();
+        }
+    }
+
+    public void DisableRefresh()
+    {
+        refreshButton.interactable = false;
+    }
+
+    public void EnableRefresh()
+    {
+        refreshButton.interactable = true;
+    }
+
+    public void CheckModCost()
+    {
+        foreach (Transform child in transform)
+        {
+            var el = child.gameObject.GetComponent<ModShopElement>();
+            int cost = el.GetMod().drawback;
+            if (SlotMachineManager.Instance.score - cost >= SlotMachineManager.Instance.CostToSpin)
+            {
+                el.EnableButton(false);
+            }
+            else
+            {
+                el.EnableButton(true);
+            }
+        }
     }
 
     //public void UpdateUI()
