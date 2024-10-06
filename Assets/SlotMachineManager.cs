@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StateBase
@@ -55,7 +56,7 @@ public class Spinning : StateBase
         shuffleDurations[0] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[1] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[2] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
-        
+
         // Initialize timers and intervals
         for (int i = 0; i < shuffleTimers.Length; i++)
         {
@@ -78,20 +79,18 @@ public class Spinning : StateBase
             // Check if the shuffle duration has been reached
             if (shuffleTimers[i] < shuffleDurations[i])
             {
-                shuffleIntervals[i] += Time.deltaTime; // Increment the interval timer
-
                 // Perform shuffle if the interval has been reached
-                if (shuffleIntervals[i] >= controller.shuffleIntervalSteps)
+                if (shuffleTimers[i] >= controller.shuffleIntervalSteps)
                 {
                     ShuffleSymbols(controller.wheels[i]); // Shuffle the current wheel
-                    shuffleIntervals[i] = 0f; // Reset the interval timer
+                    shuffleIntervals[i] += controller.shuffleIntervalSteps; // Increment the interval timer
                 }
             }
         }
 
         // Check if all shuffles are completed
-        if (shuffleTimers[0] >= shuffleDurations[0] && 
-            shuffleTimers[1] >= shuffleDurations[1] && 
+        if (shuffleTimers[0] >= shuffleDurations[0] &&
+            shuffleTimers[1] >= shuffleDurations[1] &&
             shuffleTimers[2] >= shuffleDurations[2])
         {
             controller.ChangeState(new CalculatingResults(controller)); // Change state after all shuffles
@@ -103,7 +102,7 @@ public class Spinning : StateBase
         // Get all spots
         List<Spot> allSpots = target.spots;
 
-        if(target.spawnedSymbols.Count <= 0)
+        if (target.spawnedSymbols.Count <= 0)
         {
             target.UpdateSymbols();
         }
@@ -116,10 +115,11 @@ public class Spinning : StateBase
         // Shuffle the list of GameObjects to ensure randomness
         Shuffle(allGameObjects);
 
-        // Assign each spot to a random GameObject
+        controller.result.Clear(); // Clear existing entries in the result dictionary
+
         for (int i = 0; i < Mathf.Min(allSpots.Count, allGameObjects.Count); i++)
         {
-            controller.result[allGameObjects[i]] = allSpots[i].transform.position; // Assigning the spot's position to the result
+            controller.result.Add(allGameObjects[i].GetComponent<AdditionalSlot>(), allSpots[i]); // Assigning the spot's position to the result
             allGameObjects[i].transform.position = allSpots[i].transform.position;
             allGameObjects[i].SetActive(true);
         }
@@ -132,7 +132,13 @@ public class CalculatingResults : StateBase
 
     public override void Enter()
     {
+        int score = 0;
         Debug.Log("Entering Calculating Results State");
+        var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "multiplicator").ToList();
+        foreach(Multiplicator mult in slots)
+        {
+            score += mult.INEEDMONEY(score, controller.result);
+        }
     }
 
     public override void Update()
@@ -155,7 +161,7 @@ public class SlotMachineManager : MonoBehaviour
 {
     private static SlotMachineManager instance; // Singleton instance
 
-    public Dictionary<GameObject, Vector3> result = new Dictionary<GameObject, Vector3>();
+    public Dictionary<AdditionalSlot, Spot> result = new Dictionary<AdditionalSlot, Spot>();
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
@@ -185,6 +191,10 @@ public class SlotMachineManager : MonoBehaviour
         }
         instance = this;
         currentState = new Ready(this);
+        foreach (WheelSymbolManager wheelSymbolManager in wheels)
+        {
+            wheelSymbolManager.UpdateSymbols();
+        }
     }
 
     void Update()

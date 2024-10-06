@@ -3320,7 +3320,7 @@ MonoBehaviour:
   - {fileID: 5385069269650566032}
   - {fileID: 6442994142525413156}
   shuffleTimeRange: {x: 1, y: 5}
-  shuffleIntervalSteps: 0.01
+  shuffleIntervalSteps: 0.5
 --- !u!212 &7476119245389349972
 SpriteRenderer:
   m_ObjectHideFlags: 0
