@@ -141,20 +141,15 @@ public class CalculatingResults : StateBase
         var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "multiplicator").ToList();
         foreach(Multiplicator mult in slots)
         {
-            //score += mult.INEEDMONEY(score, controller.result);
+            score += mult.INEEDMONEY(score, controller.result);
         }
 
         foreach (var entry in controller.result)
         {
             Spot spot = entry.Key; // Get the spot
             AdditionalSlot additionalSlot = entry.Value; // Get the associated AdditionalSlot
-            Debug.Log($"Processing slot: {additionalSlot.name} at spot: {spot.name}. Is it main? {spot.isMain}");
-            // Check if the slot is a main slot (implement your own logic here)
-            if (spot.isMain) // Assuming IsMainSlot is a method that checks if the slot is a main slot
-            {
-                //score += additionalSlot.INEEDMONEY(controller.result.Values); // Call INEEDMONEY
-                score++;
-            }
+            //Debug.Log($"Processing slot: {additionalSlot.name} at spot: {spot.name}. Is it main? {spot.isMain}");
+            score += additionalSlot.INEEDMONEY(controller.score, spot);
         }
         
         controller.score += score;

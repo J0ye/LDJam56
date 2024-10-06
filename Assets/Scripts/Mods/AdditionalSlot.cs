@@ -15,5 +15,13 @@ public class AdditionalSlot : SlotMod
         return "slot";
     }
 
-    public int INEEDMONEY(int score, Dictionary<Spot, AdditionalSlot> result) { return reward; }
+    public int INEEDMONEY(int score, Spot mySpot) 
+    { 
+        if(mySpot.isMain) // or is gold. Gold always pays
+        {
+            return reward; 
+        }
+
+        return 0;
+    }
 }
