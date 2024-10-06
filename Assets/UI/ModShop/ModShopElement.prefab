@@ -532,6 +532,7 @@ MonoBehaviour:
   button: {fileID: 9199139746408222468}
   background: {fileID: 2549392132407187733}
   shopName: {fileID: 1782590283325155482}
+  tinyText: {fileID: 3391782717183876626}
   description: {fileID: 1192246604985843030}
 --- !u!1 &7040436014324046849
 GameObject:
