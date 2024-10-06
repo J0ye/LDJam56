@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "RowMultiplicator", menuName = "RowMultiplicator", order = 1)]
-public class RowMultiplicator : Multiplicator
+[CreateAssetMenu(fileName = "TwoInARowMultiplicator", menuName = "TwoInARowMultiplicator", order = 1)]
+public class TwoInARowMultiplicator : Multiplicator
 {
     [SerializeField]
     private int multiplicator = 1;
@@ -18,9 +18,9 @@ public class RowMultiplicator : Multiplicator
         List<string> mainSymbols = new List<string>();
 
         var mains = result.Where(i => i.Key.isMain).Select(i => i.Value.name).ToArray();
-        bool isThreeEquals = mains[0] == mains[1] && mains[1] == mains[2];
+        bool isTwoEquals = mains[0] == mains[1] || mains[1] == mains[2] || mains[0] == mains[2];
         
-        if (isThreeEquals)
+        if (isTwoEquals)
         {
             newScore = multiplicator * result.FirstOrDefault(i => i.Key.isMain).Value.reward;
 

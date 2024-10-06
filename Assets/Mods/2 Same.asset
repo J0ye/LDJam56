@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d97793b281f27814dbeabf33abcdbccd, type: 3}
-  m_Name: ThreeInARow
+  m_Script: {fileID: 11500000, guid: 11d50f26a081dcf45b299cd761b73e3d, type: 3}
+  m_Name: 2 Same
   m_EditorClassIdentifier: 
-  name: Three in a Row
-  tinyText: X3
-  description: x2 to bird triple
+  name: 2 Equals
+  tinyText: 
+  description: 
   image: {fileID: 0}
-  color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   probability: 1
   drawback: 0
-  multiplicator: 3
+  multiplicator: 2
   specificSymbol: {fileID: 0}
