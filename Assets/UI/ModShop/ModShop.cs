@@ -90,13 +90,14 @@ public class ModShop : MonoBehaviour
         {
             var el = child.gameObject.GetComponent<ModShopElement>();
             int cost = el.GetMod().drawback;
+            
             if (SlotMachineManager.Instance.score - cost >= SlotMachineManager.Instance.CostToSpin)
             {
-                el.EnableButton(false);
+                el.EnableButton(true);
             }
             else
             {
-                el.EnableButton(true);
+                el.EnableButton(false);
             }
         }
     }
