@@ -10,6 +10,7 @@ public abstract class SlotMod : ScriptableObject
     public Sprite image;
     public Color color = Color.gray;
     public int probability = 1;
+    public int drawback = 1;
 
     public abstract string GetType();
 }
