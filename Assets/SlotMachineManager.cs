@@ -125,6 +125,10 @@ public class Spinning : StateBase
             {
                 controller.result.Add(allSpots[i], allGameObjects[i].GetComponent<SlotItem>()._slot); // Assigning the spot's position to the result
             }
+            else
+            {
+                controller.result[allSpots[i]] = allGameObjects[i].GetComponent<SlotItem>()._slot;
+            }
             allGameObjects[i].transform.position = allSpots[i].transform.position;
             allGameObjects[i].SetActive(true);
         }
@@ -138,12 +142,9 @@ public class CalculatingResults : StateBase
     public override void Enter()
     {
         int score = 0;
+        int mult = 0;
         Debug.Log("Entering Calculating Results State");
         var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "multiplicator").ToList();
-        foreach(Multiplicator mult in slots)
-        {
-            score += mult.INEEDMONEY(score, controller.result);
-        }
 
         foreach (var entry in controller.result)
         {
@@ -152,8 +153,14 @@ public class CalculatingResults : StateBase
             //Debug.Log($"Processing slot: {additionalSlot.name} at spot: {spot.name}. Is it main? {spot.isMain}");
             score += additionalSlot.INEEDMONEY(controller.score, spot);
         }
+
+        foreach(Multiplicator multi in slots)
+        {
+            mult += multi.INEEDMONEY(score, controller.result);
+            Debug.Log($"Current Score: {score}, Multiplicator Name: {multi.name}");
+        }
         
-        controller.score += score;
+        controller.score += score*mult;
     }
 
     public override void Update()
@@ -192,6 +199,9 @@ public class InShop : StateBase
 public class SlotMachineManager : MonoBehaviour
 {
     private static SlotMachineManager instance; // Singleton instance
+
+    private StateBase currentState;
+    public StateBase CurrentState => currentState;
 
     public Dictionary<Spot, AdditionalSlot> result = new Dictionary<Spot, AdditionalSlot>();
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
@@ -237,8 +247,6 @@ public class SlotMachineManager : MonoBehaviour
             return instance;
         }
     }
-
-    private StateBase currentState;
 
     void Awake()
     {

@@ -164,7 +164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
       propertyPath: _mods.Array.size
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
       propertyPath: _mods.Array.data[0]
@@ -182,6 +182,14 @@ PrefabInstance:
       propertyPath: _mods.Array.data[3]
       value: 
       objectReference: {fileID: 11400000, guid: 50a4ab3553b59304eb5ee60f6aeb44dd, type: 2}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[4]
+      value: 
+      objectReference: {fileID: 11400000, guid: 273400a8110713f4a9351b611f316931, type: 2}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[5]
+      value: 
+      objectReference: {fileID: 11400000, guid: dd28c7253e555ef4cbc9607c0f58be1b, type: 2}
     - target: {fileID: 8859323753428412375, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
