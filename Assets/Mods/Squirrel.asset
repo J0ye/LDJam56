@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Squirrel
   m_EditorClassIdentifier: 
   name: Squirrel
+  tinyText: 
   description: 
   image: {fileID: 37730594, guid: be14e255cfa89104984c9fcabcebf518, type: 3}
+  color: {r: 0.93333334, g: 0.9607843, b: 0.6745098, a: 1}
+  probability: 1
   prefab: {fileID: 3834957297376247015, guid: 79e4a2badc4c4be48942a711fa3e2cfe, type: 3}
+  reward: 1
