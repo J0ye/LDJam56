@@ -1,12 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
+
 public class LeverScript : MonoBehaviour
 {
     private Quaternion startingRotation; // Store the starting rotation
+    private bool isLeverDown = false;
     public float targetAngle = 45f; // Target angle for rotation
     public float rotationSpeed = 5f; // Speed of rotation
+
+    public UnityEvent onLeverPulledDown = new UnityEvent();
 
     // Start is called before the first frame update
     void Start()
@@ -16,12 +19,20 @@ public class LeverScript : MonoBehaviour
 
     void OnMouseDown()
     {
-        StartCoroutine(RotateLever());
+        if(isLeverDown == false)
+        {
+            isLeverDown = true;
+            StartCoroutine(RotateLever());
+        }
     }
 
-    void OnMouseUp()
+    void Update()
     {
-        StartCoroutine(SnapLeverBack());
+        if (Input.GetMouseButtonUp(0) && isLeverDown == true)
+        {
+            isLeverDown = false;
+            StartCoroutine(SnapLeverBack());
+        }
     }
 
     private IEnumerator RotateLever()
@@ -32,9 +43,19 @@ public class LeverScript : MonoBehaviour
 
         while (elapsedTime < 1f)
         {
+            if(!isLeverDown)
+            {
+                break;
+            }
             transform.rotation = Quaternion.Slerp(startingRotation, targetRotation, elapsedTime);
             elapsedTime += Time.deltaTime * rotationSpeed;
             yield return null;
+        }
+        
+        // Check if the lever is close to the target rotation before invoking the event
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 1f) // Threshold of 1 degree
+        {
+            onLeverPulledDown.Invoke();
         }
     }
 

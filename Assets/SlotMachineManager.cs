@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class StateBase
@@ -47,40 +45,69 @@ public class Ready : StateBase
 public class Spinning : StateBase
 {
     public Spinning(SlotMachineManager controller) : base(controller) { }
+    private float[] shuffleDurations = new float[3]; // Array to hold durations for each shuffle
+    private float[] shuffleTimers = new float[3]; // Array to hold timers for each shuffle
+    private float[] shuffleIntervals = new float[3]; // Array to hold intervals for each shuffle
 
-    private float shuffleTimer = 0f;
-    private int shuffleInterval = 1;
-
-    /// <summary>
-    /// Overrides the Update method from StateBase to implement specific behavior for the Spinning state.
-    /// This method increments the shuffle timer and checks if it has reached the shuffle interval.
-    /// If the interval is reached, it either increases the interval or changes the state to Ready.
-    /// </summary>
-    public override void Update()
+    public override void Enter()
     {
-        shuffleTimer += Time.deltaTime;
-        if (shuffleTimer >= shuffleInterval)
+        base.Enter();
+        shuffleDurations[0] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
+        shuffleDurations[1] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
+        shuffleDurations[2] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
+        
+        // Initialize timers and intervals
+        for (int i = 0; i < shuffleTimers.Length; i++)
         {
-            ShuffleSymbols();
-            if (shuffleInterval < 4)
-            {
-                shuffleInterval++;
-            }
-            else
-            {
-                controller.ChangeState(new CalculatingResults(controller)); // Change state
-            }
-            shuffleTimer = 0f;
+            shuffleTimers[i] = 0f; // Reset all timers
+            shuffleIntervals[i] = 0f; // Reset all intervals
+        }
+
+        foreach (WheelSymbolManager target in controller.wheels)
+        {
+            target.UpdateSymbols(); // Ensure symbols are updated when entering the spinning state
         }
     }
 
-    private void ShuffleSymbols()
+    public override void Update()
+    {
+        for (int i = 0; i < shuffleTimers.Length; i++)
+        {
+            shuffleTimers[i] += Time.deltaTime; // Increment the timer for each shuffle
+
+            // Check if the shuffle duration has been reached
+            if (shuffleTimers[i] < shuffleDurations[i])
+            {
+                shuffleIntervals[i] += Time.deltaTime; // Increment the interval timer
+
+                // Perform shuffle if the interval has been reached
+                if (shuffleIntervals[i] >= controller.shuffleIntervalSteps)
+                {
+                    ShuffleSymbols(controller.wheels[i]); // Shuffle the current wheel
+                    shuffleIntervals[i] = 0f; // Reset the interval timer
+                }
+            }
+        }
+
+        // Check if all shuffles are completed
+        if (shuffleTimers[0] >= shuffleDurations[0] && 
+            shuffleTimers[1] >= shuffleDurations[1] && 
+            shuffleTimers[2] >= shuffleDurations[2])
+        {
+            controller.ChangeState(new CalculatingResults(controller)); // Change state after all shuffles
+        }
+    }
+
+    private void ShuffleSymbols(WheelSymbolManager target)
     {
         // Get all spots
-        List<Spot> allSpots = SpotList.Instance.GetSpots();
+        List<Spot> allSpots = target.spots;
 
-        // ########################################################################
-        List<GameObject> allGameObjects = new List<GameObject>(controller.result.Keys); // TO DO: Should be list from mods i think
+        if(target.spawnedSymbols.Count <= 0)
+        {
+            target.UpdateSymbols();
+        }
+        List<GameObject> allGameObjects = target.spawnedSymbols;
         foreach (GameObject gameObject in allGameObjects)
         {
             gameObject.SetActive(false);
@@ -129,6 +156,10 @@ public class SlotMachineManager : MonoBehaviour
     private static SlotMachineManager instance; // Singleton instance
 
     public Dictionary<GameObject, Vector3> result = new Dictionary<GameObject, Vector3>();
+    public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
+    public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
+    public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
+
 
     public static SlotMachineManager Instance // Public property to access the instance
     {
@@ -153,11 +184,23 @@ public class SlotMachineManager : MonoBehaviour
             return;
         }
         instance = this;
+        currentState = new Ready(this);
     }
 
     void Update()
     {
         currentState?.Update(); // Call the update function of the current state
+    }
+
+    /// <summary>
+    /// Attempts to change to the Spinning state if the current state is Ready.
+    /// </summary>
+    public void StartSpinning()
+    {
+        if (currentState is Ready)
+        {
+            ChangeState(new Spinning(this));
+        }
     }
 
     public void ChangeState(StateBase newState)
@@ -166,18 +209,5 @@ public class SlotMachineManager : MonoBehaviour
         newState.previous = currentState;
         currentState = newState; // Change to the new state
         currentState.Enter(); // Call Enter on the new state
-    }
-
-    private void GenerateSymbols(Transform parent)
-    {
-        var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "slot").ToList();
-        //slots = Shuffle(slots).ToList();
-
-        foreach (AdditionalSlot mod in slots)
-        {
-            var newSymbol = Instantiate(mod.prefab, Vector3.zero, Quaternion.identity, parent);
-            newSymbol.GetComponent<SlotItem>().Initialize(mod);
-            newSymbol.SetActive(false);
-        }
     }
 }
