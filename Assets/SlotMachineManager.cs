@@ -198,6 +198,8 @@ public class SlotMachineManager : MonoBehaviour
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
     public int startingCost = 2;
+    public int startingScore = 3;
+    
     [Header ("UI")]
     public GameObject modShopUI;
     public TMP_Text scoreText;
@@ -238,7 +240,7 @@ public class SlotMachineManager : MonoBehaviour
 
     private StateBase currentState;
 
-    void Start()
+    void Awake()
     {
         // Singelton
         if (instance != null && instance != this)
@@ -248,12 +250,8 @@ public class SlotMachineManager : MonoBehaviour
         }
         instance = this;
         currentState = new Ready(this);
-        foreach (WheelSymbolManager wheelSymbolManager in wheels)
-        {
-            wheelSymbolManager.UpdateSymbols();
-        }
 
-        score = 3;
+        score = startingScore;
         CostToSpin = startingCost;
         modShopUI.SetActive(false);
     }

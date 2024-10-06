@@ -20,4 +20,4 @@ MonoBehaviour:
   probability: 1
   drawback: 0
   multiplicator: 3
-  specificSymbol: {fileID: 11400000, guid: 50a4ab3553b59304eb5ee60f6aeb44dd, type: 2}
+  specificSymbol: {fileID: 0}
