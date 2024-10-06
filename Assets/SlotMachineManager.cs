@@ -61,7 +61,11 @@ public class Spinning : StateBase
         shuffleTimer += Time.deltaTime;
         if (shuffleTimer >= shuffleInterval)
         {
-            ShuffleSymbols();
+            foreach (WheelSymbolManager target in controller.wheels)
+            {
+                ShuffleSymbols(target);
+            }
+
             if (shuffleInterval < 4)
             {
                 shuffleInterval++;
@@ -74,13 +78,16 @@ public class Spinning : StateBase
         }
     }
 
-    private void ShuffleSymbols()
+    private void ShuffleSymbols(WheelSymbolManager target)
     {
         // Get all spots
-        List<Spot> allSpots = SpotList.Instance.GetSpots();
+        List<Spot> allSpots = target.spots;
 
-        // ########################################################################
-        List<GameObject> allGameObjects = new List<GameObject>(controller.result.Keys); // TO DO: Should be list from mods i think
+        if(target.spawnedSymbols.Count <= 0)
+        {
+            target.UpdateSymbols();
+        }
+        List<GameObject> allGameObjects = target.spawnedSymbols;
         foreach (GameObject gameObject in allGameObjects)
         {
             gameObject.SetActive(false);
@@ -129,6 +136,7 @@ public class SlotMachineManager : MonoBehaviour
     private static SlotMachineManager instance; // Singleton instance
 
     public Dictionary<GameObject, Vector3> result = new Dictionary<GameObject, Vector3>();
+    public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
 
     public static SlotMachineManager Instance // Public property to access the instance
     {
@@ -153,11 +161,23 @@ public class SlotMachineManager : MonoBehaviour
             return;
         }
         instance = this;
+        currentState = new Ready(this);
     }
 
     void Update()
     {
         currentState?.Update(); // Call the update function of the current state
+    }
+
+    /// <summary>
+    /// Attempts to change to the Spinning state if the current state is Ready.
+    /// </summary>
+    public void StartSpinning()
+    {
+        if (currentState is Ready)
+        {
+            ChangeState(new Spinning(this));
+        }
     }
 
     public void ChangeState(StateBase newState)
@@ -166,18 +186,5 @@ public class SlotMachineManager : MonoBehaviour
         newState.previous = currentState;
         currentState = newState; // Change to the new state
         currentState.Enter(); // Call Enter on the new state
-    }
-
-    private void GenerateSymbols(Transform parent)
-    {
-        var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "slot").ToList();
-        //slots = Shuffle(slots).ToList();
-
-        foreach (AdditionalSlot mod in slots)
-        {
-            var newSymbol = Instantiate(mod.prefab, Vector3.zero, Quaternion.identity, parent);
-            newSymbol.GetComponent<SlotItem>().Initialize(mod);
-            newSymbol.SetActive(false);
-        }
     }
 }
