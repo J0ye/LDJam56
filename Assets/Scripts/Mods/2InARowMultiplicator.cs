@@ -14,21 +14,22 @@ public class TwoInARowMultiplicator : Multiplicator
 
     public override int INEEDMONEY(int score, Dictionary<Spot, AdditionalSlot> result)
     {
-        int newScore = 0;
+        int mult = 0;
         List<string> mainSymbols = new List<string>();
 
-        var mains = result.Where(i => i.Key.isMain).Select(i => i.Value.name).ToArray();
+        var mains = result.Where(i => i.Key.isMain == true).Select(i => i.Value.name).ToArray();
         bool isTwoEquals = mains[0] == mains[1] || mains[1] == mains[2] || mains[0] == mains[2];
-        
+        Debug.Log($"isTwoEquals: {isTwoEquals}");
+        Debug.Log($"mains: {string.Join(", ", mains)}");
         if (isTwoEquals)
         {
-            newScore = multiplicator * result.FirstOrDefault(i => i.Key.isMain).Value.reward;
+            mult = multiplicator;
 
             if (specificSymbol != null && mains[0] != specificSymbol.name)
             {
-                newScore = 0;
+                mult = 0;
             }
         }
-        return newScore;
+        return mult;
     }
 }
