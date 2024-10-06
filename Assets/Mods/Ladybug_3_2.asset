@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Ladybug II
   tinyText: X2
   description: x2 to ladybug triple
-  image: {fileID: 0}
+  image: {fileID: 1015721553, guid: 2755487a53e3d1847965a88d869bceeb, type: 3}
   color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   probability: 4
   drawback: 3

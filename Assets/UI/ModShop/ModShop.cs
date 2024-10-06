@@ -26,7 +26,7 @@ public class ModShop : MonoBehaviour
         60,
         30,
         13,
-        5
+        7
     };
 
     private void Awake()

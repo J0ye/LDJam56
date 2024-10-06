@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Birds III
   tinyText: X4
   description: x4 to bird triple
-  image: {fileID: 0}
+  image: {fileID: -1288124200, guid: 76505423f0c8ffa4693ae7c70a4ca5a2, type: 3}
   color: {r: 0.8117647, g: 0.6627451, b: 0.34901962, a: 1}
   probability: 5
   drawback: 5

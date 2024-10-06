@@ -15,7 +15,7 @@ MonoBehaviour:
   name: Squirrel II
   tinyText: X2
   description: x2 to squirrel triple
-  image: {fileID: 0}
+  image: {fileID: 37730594, guid: be14e255cfa89104984c9fcabcebf518, type: 3}
   color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   probability: 4
   drawback: 3

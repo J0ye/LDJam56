@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.SceneManagement;
 
 public class StateBase
 {
@@ -56,6 +57,9 @@ public class Spinning : StateBase
     {
         base.Enter();
         controller.PayCost();
+        controller.spins++;
+        ModShop.instance.GenerateRandomMods();
+        PlayerPrefs.SetInt("Spins", controller.spins);
         shuffleDurations[0] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[1] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[2] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
@@ -142,12 +146,18 @@ public class Spinning : StateBase
 
 public class CalculatingResults : StateBase
 {
+    private List<GameObject> spawnedAcorns = new List<GameObject>(); // New list to hold spawned acorns
+    private Vector3 targetPosition; // Target position for acorns
+
+    private int score = 0;
+    private int mult = 0;
+
     public CalculatingResults(SlotMachineManager controller) : base(controller) { }
 
     public override void Enter()
     {
-        int score = 0;
-        int mult = 0;
+        score = 0;
+        mult = 0;
         Debug.Log("Entering Calculating Results State");
         var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "multiplicator").ToList();
 
@@ -155,11 +165,10 @@ public class CalculatingResults : StateBase
         {
             Spot spot = entry.Key; // Get the spot
             AdditionalSlot additionalSlot = entry.Value; // Get the associated AdditionalSlot
-            //Debug.Log($"Processing slot: {additionalSlot.name} at spot: {spot.name}. Is it main? {spot.isMain}");
             score += additionalSlot.INEEDMONEY(controller.score, spot);
         }
 
-        foreach(Multiplicator multi in slots)
+        foreach (Multiplicator multi in slots)
         {
             mult += multi.INEEDMONEY(score, controller.result);
             Debug.Log($"Current Score: {score}, Multiplicator Name: {multi.name}");
@@ -170,17 +179,62 @@ public class CalculatingResults : StateBase
             mult = 1;
         }
 
-        controller.score += score*mult;
+        // Set the target position to the top right corner of the screen
+        targetPosition = new Vector3(12, 6, 0);
+
+        // Spawn acorns for each point scored
+        int t = 0;
+        for (int i = 0; i < score; i++)
+        {
+            GameObject acorn = Object.Instantiate(controller.acornPrefab); // Spawn acorn
+            spawnedAcorns.Add(acorn); // Add to the list
+
+            Vector3 wheelPosition = controller.wheels[t].transform.position; // Get the wheel's position
+            acorn.transform.position = wheelPosition + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0); // Add random offset
+            acorn.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f)); // Set random rotation around z-axis
+            t++;
+            if(t >= controller.wheels.Count)
+            {
+                t = 0;
+            }
+        }
     }
 
     public override void Update()
     {
-        controller.ChangeState(new Ready(controller));
+        // Move each acorn towards the target position
+        for (int i = spawnedAcorns.Count - 1; i >= 0; i--)
+        {
+            GameObject acorn = spawnedAcorns[i];
+            if (acorn != null)
+            {
+                // Move the acorn towards the target position
+                float randomSpeed = Random.Range(controller.acornSpeed.x, controller.acornSpeed.y); // Get a random speed between x and y
+                acorn.transform.position = Vector3.MoveTowards(acorn.transform.position, targetPosition, Time.deltaTime * randomSpeed); // Adjust speed as needed
+                // Check if the acorn has reached the target position
+                if (Vector3.Distance(acorn.transform.position, targetPosition) < 0.1f)
+                {
+                    Object.Destroy(acorn); // Destroy the acorn when it reaches the target
+                    spawnedAcorns.RemoveAt(i); // Remove from the list
+
+                    if (spawnedAcorns.Count <= 0)
+                    {
+
+                        controller.ChangeState(new Ready(controller));
+
+                    }
+                }
+            }
+        }
     }
 
     public override void Exit()
     {
-        Debug.Log("Exiting Calculating Results State");
+        controller.score += score * mult;
+        if (!controller.ScoreBiggerCost())
+        {
+            SceneManager.LoadScene("End");
+        }
     }
 }
 
@@ -201,6 +255,40 @@ public class InShop : StateBase
     }
 }
 
+public class SetUp : StateBase
+{
+    private Vector3 targetPosition;
+    private float duration = 2f; // Duration for the animation
+    private float elapsedTime = 0f;
+    private bool isAnimating = false;
+    public SetUp(SlotMachineManager controller) : base(controller) { }
+
+    public override void Enter()
+    {
+        base.Enter();
+        targetPosition = new Vector3(0, 0, -8);
+        elapsedTime = 0f;
+        isAnimating = true;
+    }
+
+    public override void Update()
+    {
+        if (isAnimating)
+        {
+            elapsedTime += Time.deltaTime;
+            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPosition, (elapsedTime / duration));
+
+            // Check if the animation is complete
+            if (elapsedTime >= duration)
+            {
+                Camera.main.transform.position = targetPosition; // Ensure the final position is set
+                isAnimating = false; // Stop the animation
+                controller.ChangeState(new Ready(controller));
+            }
+        }
+    }
+}
+
 /// <summary>
 /// Singleton class for managing the Slot Machine state.
 /// Ensures that only one instance of SlotMachineManager exists in the game,
@@ -213,19 +301,23 @@ public class SlotMachineManager : MonoBehaviour
     private StateBase currentState;
     public StateBase CurrentState => currentState;
 
+    public GameObject acornPrefab;
     public Dictionary<Spot, AdditionalSlot> result = new Dictionary<Spot, AdditionalSlot>();
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
     public int startingCost = 2;
     public int startingScore = 3;
-    
-    [Header ("UI")]
+    public int spinCostIncreasesAfter = 3;
+    public int spins = 0;
+
+    [Header("UI")]
     public GameObject modShopUI;
     public TMP_Text scoreText;
+    public Vector2 acornSpeed = new Vector2(5f, 15f);
     private int _score = 3; // Backing field for score
 
-    public int score 
+    public int score
     {
         get => _score;
         set
@@ -267,7 +359,8 @@ public class SlotMachineManager : MonoBehaviour
             return;
         }
         instance = this;
-        currentState = new Ready(this);
+        currentState = new SetUp(this);
+        currentState.Enter();
 
         score = startingScore;
         CostToSpin = startingCost;
@@ -292,11 +385,11 @@ public class SlotMachineManager : MonoBehaviour
 
     public void OpenShop()
     {
-        if(currentState is InShop)
+        if (currentState is InShop)
         {
             ChangeState(new Ready(this));
         }
-        else if(currentState is Ready)
+        else if (currentState is Ready)
         {
             ChangeState(new InShop(this));
         }
@@ -318,7 +411,7 @@ public class SlotMachineManager : MonoBehaviour
         score -= costToSpin;
 
         // Check if the method has been called three times
-        if (payCostCallCount >= 3)
+        if (payCostCallCount >= spinCostIncreasesAfter)
         {
             CostToSpin += 1; // Increase CostToSpin by 3
             payCostCallCount = 0; // Reset the counter
