@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,14 @@ public class ModShop : MonoBehaviour
 
     [SerializeField]
     Button refreshButton;
+
+    private int[] PROBABILITY_RATIOS = new int[4]
+    {
+        60,
+        30,
+        13,
+        5
+    };
 
     private void Awake()
     {
@@ -62,7 +71,18 @@ public class ModShop : MonoBehaviour
 
     private SlotMod GetRandomMod()
     {
-        return _availableMods[Random.Range(0, _availableMods.Count)];
+        int probabilityWeight = Random.Range(1, 100);
+        int probCategory = 1;
+        for (int i = 0; i < PROBABILITY_RATIOS.Length; i++)
+        {
+            if (probabilityWeight < PROBABILITY_RATIOS[i] && (i == PROBABILITY_RATIOS.Length - 1 || probabilityWeight > PROBABILITY_RATIOS[i + 1]))
+            {
+                probCategory = i + 1;
+            }
+        }
+
+        var filtered = _availableMods.Where(i => i.probability == probCategory).ToList();
+        return filtered[Random.Range(0, filtered.Count)];
     }
 
     public void RefreshShop()
