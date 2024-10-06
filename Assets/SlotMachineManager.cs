@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StateBase
@@ -77,5 +78,18 @@ public class SlotMachineManager : MonoBehaviour
         newState.previous = currentState;
         currentState = newState; // Change to the new state
         currentState.Enter(); // Call Enter on the new state
+    }
+
+    private void GenerateSymbols(Transform parent)
+    {
+        var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "slot").ToList();
+        //slots = Shuffle(slots).ToList();
+
+        foreach (AdditionalSlot mod in slots)
+        {
+            var newSymbol = Instantiate(mod.prefab, Vector3.zero, Quaternion.identity, parent);
+            newSymbol.GetComponent<SlotItem>().Initialize(mod);
+            newSymbol.SetActive(false);
+        }
     }
 }
