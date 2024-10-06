@@ -11,22 +11,22 @@ PrefabInstance:
     - target: {fileID: 2710883066902463160, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: df7bddb6834360c42987b1a29a6c76f8, type: 3}
+      objectReference: {fileID: -1288124200, guid: 76505423f0c8ffa4693ae7c70a4ca5a2, type: 3}
     - target: {fileID: 6117457374227765571, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_Name
-      value: Mouse
+      value: Bird
       objectReference: {fileID: 0}
     - target: {fileID: 6494123858161533024, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.05
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6494123858161533024, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.05
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6494123858161533024, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.05
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: 6494123858161533024, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_LocalPosition.x

@@ -11,7 +11,7 @@ public class ModShop : MonoBehaviour
     ModShopElement _prefab;
 
     [SerializeField]
-    SlotMod[] _availableMods;
+    List<SlotMod> _availableMods;
 
     private void Awake()
     {
@@ -57,7 +57,7 @@ public class ModShop : MonoBehaviour
 
     private SlotMod GetRandomMod()
     {
-        return _availableMods[Random.Range(0, _availableMods.Length)];
+        return _availableMods[Random.Range(0, _availableMods.Count)];
     }
 
     //public void UpdateUI()

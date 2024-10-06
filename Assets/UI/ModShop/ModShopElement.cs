@@ -10,6 +10,9 @@ public class ModShopElement : MonoBehaviour
     [SerializeField]
     Image image;
 
+    [SerializeField]
+    Button button;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +36,6 @@ public class ModShopElement : MonoBehaviour
     public void BuyMod()
     {
         ModInventory.instance.AddMod(_mod);
-        GetComponent<Button>().interactable = false;
+        button.interactable = false;
     }
 }
