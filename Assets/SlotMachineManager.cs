@@ -280,6 +280,6 @@ public class SlotMachineManager : MonoBehaviour
 
     public bool ScoreBiggerCost()
     {
-        return score > costToSpin;
+        return score >= costToSpin;
     }
 }
