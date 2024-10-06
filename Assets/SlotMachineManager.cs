@@ -117,11 +117,13 @@ public class Spinning : StateBase
         // Shuffle the list of GameObjects to ensure randomness
         Shuffle(allGameObjects);
 
-        controller.result.Clear(); // Clear existing entries in the result dictionary
-
         for (int i = 0; i < Mathf.Min(allSpots.Count, allGameObjects.Count); i++)
         {
-            controller.result.Add(allSpots[i], allGameObjects[i].GetComponent<AdditionalSlot>()); // Assigning the spot's position to the result
+            // Check if the spot already exists in the result dictionary
+            if (!controller.result.ContainsKey(allSpots[i]))
+            {
+                controller.result.Add(allSpots[i], allGameObjects[i].GetComponent<SlotItem>()._slot); // Assigning the spot's position to the result
+            }
             allGameObjects[i].transform.position = allSpots[i].transform.position;
             allGameObjects[i].SetActive(true);
         }
@@ -142,7 +144,20 @@ public class CalculatingResults : StateBase
             //score += mult.INEEDMONEY(score, controller.result);
         }
 
-
+        foreach (var entry in controller.result)
+        {
+            Spot spot = entry.Key; // Get the spot
+            AdditionalSlot additionalSlot = entry.Value; // Get the associated AdditionalSlot
+            Debug.Log($"Processing slot: {additionalSlot.name} at spot: {spot.name}. Is it main? {spot.isMain}");
+            // Check if the slot is a main slot (implement your own logic here)
+            if (spot.isMain) // Assuming IsMainSlot is a method that checks if the slot is a main slot
+            {
+                //score += additionalSlot.INEEDMONEY(controller.result.Values); // Call INEEDMONEY
+                score++;
+            }
+        }
+        
+        controller.score += score;
     }
 
     public override void Update()
@@ -171,8 +186,17 @@ public class SlotMachineManager : MonoBehaviour
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
     [Header ("UI")]
     public TMP_Text scoreText;
-    [HideInInspector]
-    public int score = 0;
+    private int _score = 3; // Backing field for score
+
+    public int score // Property for score
+    {
+        get => _score;
+        set
+        {
+            _score = value;
+            scoreText.text = _score.ToString(); // Update the score text
+        }
+    }
 
 
     public static SlotMachineManager Instance // Public property to access the instance
@@ -203,6 +227,8 @@ public class SlotMachineManager : MonoBehaviour
         {
             wheelSymbolManager.UpdateSymbols();
         }
+
+        score = 3;
     }
 
     void Update()

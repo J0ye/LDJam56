@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SlotItem : MonoBehaviour
 {
-    private AdditionalSlot _slot;
+    [HideInInspector]
+    public AdditionalSlot _slot;
 
     public Vector3 targetPosition = Vector3.zero;
 
