@@ -200,6 +200,9 @@ public class SlotMachineManager : MonoBehaviour
 {
     private static SlotMachineManager instance; // Singleton instance
 
+    private StateBase currentState;
+    public StateBase CurrentState => currentState;
+
     public Dictionary<Spot, AdditionalSlot> result = new Dictionary<Spot, AdditionalSlot>();
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
@@ -244,8 +247,6 @@ public class SlotMachineManager : MonoBehaviour
             return instance;
         }
     }
-
-    private StateBase currentState;
 
     void Awake()
     {

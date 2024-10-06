@@ -19,7 +19,7 @@ public class LeverScript : MonoBehaviour
 
     void OnMouseDown()
     {
-        if(isLeverDown == false && SlotMachineManager.Instance.ScoreBiggerCost())
+        if(isLeverDown == false && SlotMachineManager.Instance.ScoreBiggerCost() && SlotMachineManager.Instance.CurrentState is Ready)
         {
             isLeverDown = true;
             StartCoroutine(RotateLever());
