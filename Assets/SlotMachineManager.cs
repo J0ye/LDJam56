@@ -167,6 +167,23 @@ public class CalculatingResults : StateBase
     }
 }
 
+public class InShop : StateBase
+{
+    public InShop(SlotMachineManager controller) : base(controller) { }
+
+    public override void Enter()
+    {
+        base.Enter();
+        controller.modShopUI.SetActive(true);
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        controller.modShopUI.SetActive(false);
+    }
+}
+
 /// <summary>
 /// Singleton class for managing the Slot Machine state.
 /// Ensures that only one instance of SlotMachineManager exists in the game,
@@ -182,6 +199,7 @@ public class SlotMachineManager : MonoBehaviour
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
     public int startingCost = 2;
     [Header ("UI")]
+    public GameObject modShopUI;
     public TMP_Text scoreText;
     private int _score = 3; // Backing field for score
 
@@ -237,6 +255,7 @@ public class SlotMachineManager : MonoBehaviour
 
         score = 3;
         CostToSpin = startingCost;
+        modShopUI.SetActive(false);
     }
 
     void Update()
@@ -252,6 +271,18 @@ public class SlotMachineManager : MonoBehaviour
         if (currentState is Ready)
         {
             ChangeState(new Spinning(this));
+        }
+    }
+
+    public void OpenShop()
+    {
+        if(currentState is InShop)
+        {
+            ChangeState(new Ready(this));
+        }
+        else
+        {
+            ChangeState(new InShop(this));
         }
     }
 
@@ -280,6 +311,6 @@ public class SlotMachineManager : MonoBehaviour
 
     public bool ScoreBiggerCost()
     {
-        return score > costToSpin;
+        return score >= costToSpin;
     }
 }
