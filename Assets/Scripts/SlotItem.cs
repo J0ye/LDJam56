@@ -6,6 +6,8 @@ public class SlotItem : MonoBehaviour
 {
     private AdditionalSlot _slot;
 
+    public Vector3 targetPosition = Vector3.zero;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +23,5 @@ public class SlotItem : MonoBehaviour
     public void Initialize(AdditionalSlot slot)
     {
         _slot = slot;
-        GetComponent<SpriteRenderer>().sprite = _slot.image;
-    }
+    } 
 }

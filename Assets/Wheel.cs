@@ -7,17 +7,17 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class Wheel : MonoBehaviour
 {
-    public GameObject slotPrefab;
-    public Vector2 startMoveSpeed = new Vector2(15f, 50f);// Initial speed at which the objects will move down
+    public Vector2 startMoveSpeed = new Vector2(1f, 1f);// Initial speed at which the objects will move down
     public float snapThreshold = 0.1f; // Range around y = 0 to check for snapping
     public float snapSpeed = 0.2f;
     public float smoothMoveDuration = 1.0f; // Duration for smooth movement
 
-    private List<GameObject> symbols = new List<GameObject>();
+    private LinkedList<GameObject> symbols = new LinkedList<GameObject>();
     private List<Vector3> initialPositions = new List<Vector3>(); // New list to store initial positions
     private float currentMoveSpeed; // Current speed during the spin
     private float setSpeed;
-    private float resetLimit = 2;
+    private int startPosition = 2;
+    private int resetLimit = 2;
     private bool isSpinning = false; // Flag to check if spinning is active
     private bool symbolsSnap = false;
 
@@ -35,11 +35,12 @@ public class Wheel : MonoBehaviour
         var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "slot").ToList();
         //slots = Shuffle(slots).ToList();
 
-        resetLimit = Mathf.RoundToInt(slots.Count / 2) * 2;
+        startPosition = Mathf.RoundToInt(slots.Count / 2) * 2;
+        resetLimit = startPosition;
 
         foreach (AdditionalSlot mod in slots)
         {
-            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity, transform);
+            var newSymbol = Instantiate(mod.prefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity, transform);
             newSymbol.GetComponent<SlotItem>().Initialize(mod);
             AddSymbol(newSymbol);
         }
@@ -52,39 +53,36 @@ public class Wheel : MonoBehaviour
         {
             isSpinning = true;
             // Reset each symbol to its starting position
-            for (int i = 0; i < symbols.Count; i++)
-            {
-                symbols[i].transform.position = initialPositions[i];
-            }
+            //for (int i = 0; i < symbols.Count; i++)
+            //{
+            //    symbols[i].transform.position = initialPositions[i];
+            //}
             currentMoveSpeed = GetRandomSpeed();
             setSpeed = currentMoveSpeed;
             StartCoroutine(SpinAndSlowDown());
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {            
-            var newSymbol = Instantiate(slotPrefab, new Vector3(transform.position.x, resetLimit, transform.position.z), Quaternion.identity);
-            AddSymbol(newSymbol);
         }
 
         if (isSpinning)
         {
             foreach (GameObject symbol in symbols)
             {
-                symbol.transform.position += Vector3.down * currentMoveSpeed * Time.deltaTime;              
+                symbol.transform.position += Vector3.down * currentMoveSpeed * Time.deltaTime;
             }
+            //transform.position += Vector3.down * currentMoveSpeed * Time.deltaTime;
         }
 
         if(!symbolsSnap)
         {
-            foreach(GameObject symbol in symbols)
-            {            
+            foreach (GameObject symbol in symbols)
+            {
                 // Reset position if y is -6 or smaller
                 if (symbol.transform.position.y < resetLimit)
                 {
                     symbol.transform.position = new Vector3(symbol.transform.position.x, resetLimit * -1, symbol.transform.position.z);
                 }
             }
+
+            //transform.position += Vector3.down * currentMoveSpeed * Time.deltaTime;
         }
     }
 
@@ -94,7 +92,7 @@ public class Wheel : MonoBehaviour
         float startLimit = resetLimit;
         resetLimit = resetLimit - 2; // Extended limit
         obj.transform.position = new Vector3(transform.position.x, startLimit, transform.position.z);
-        symbols.Add(obj);
+        symbols.AddLast(obj);
         initialPositions.Add(obj.transform.position);
     }
 
@@ -129,8 +127,28 @@ public class Wheel : MonoBehaviour
                 // If a closest symbol was found, smoothly move it to 0 and adjust others
                 if (closestSymbol != null)
                 {
+                    var closestSymbolNode = symbols.Find(closestSymbol);
+                    closestSymbolNode.Value.GetComponent<SlotItem>().targetPosition = new Vector3(closestSymbol.transform.position.x, 0, closestSymbol.transform.position.z);
+                    var currentNode = closestSymbolNode.Next;
+                    float pos = 0;
+                    while (currentNode != null && currentNode != closestSymbolNode)
+                    {
+                        pos -= 2;
+                        currentNode.Value.GetComponent<SlotItem>().targetPosition = new Vector3(currentNode.Value.transform.position.x, pos, currentNode.Value.transform.position.z);
+                        currentNode = currentNode.Next;
+                        if (currentNode == null)
+                        {
+                            currentNode = symbols.First;
+                        }
+
+                        if (pos == resetLimit)
+                        {
+                            pos = startPosition + 2;
+                        }
+                    }
+
                     isSpinning = false; // Stop spinning
-                    StartCoroutine(SmoothMoveToZeroAndAdjustOthers(closestSymbol));
+                    StartCoroutine(SmoothMoveToZeroAndAdjustOthers());
                     elapsedTime = Mathf.Infinity;
                 }
             }
@@ -139,45 +157,48 @@ public class Wheel : MonoBehaviour
         currentMoveSpeed = 0; // Ensure speed is set to 0 after the duration
     }
 
-    private IEnumerator SmoothMoveToZeroAndAdjustOthers(GameObject closestSymbol)
+    private IEnumerator SmoothMoveToZeroAndAdjustOthers()
     {
         symbolsSnap = true;
-        float distanceToSnap = closestSymbol.transform.position.y; // Distance to snap to 0
-        Vector3 targetPosition = new Vector3(closestSymbol.transform.position.x, 0, closestSymbol.transform.position.z);
+        //float distanceToSnap = closestSymbol.transform.position.y; // Distance to snap to 0
+        //Vector3 targetPosition = new Vector3(closestSymbol.transform.position.x, 0, closestSymbol.transform.position.z);
 
         // Calculate target positions for all symbols
-        Vector3[] targetPositions = new Vector3[symbols.Count];
-        for (int i = 0; i < symbols.Count; i++)
-        {
-            if (symbols[i] != closestSymbol)
-            {
-                //int nearestMultiple = (int)System.Math.Round(( / (double)2), System.MidpointRounding.AwayFromZero) * 2;
-                int nearest = Mathf.RoundToInt((symbols[i].transform.position.y - distanceToSnap) / 2) * 2;
-                targetPositions[i] = new Vector3(symbols[i].transform.position.x, nearest, symbols[i].transform.position.z);
-            }
-            else
-            {
-                targetPositions[i] = targetPosition; // The closest symbol goes to 0
-            }
-        }
+        //Vector3[] targetPositions = new Vector3[symbols.Count];
+        //for (int i = 0; i < symbols.Count; i++)
+        //{
+        //    if (symbols[i] != closestSymbol)
+        //    {
+        //        //int nearestMultiple = (int)System.Math.Round(( / (double)2), System.MidpointRounding.AwayFromZero) * 2;
+        //        int nearest = Mathf.RoundToInt((symbols[i].transform.position.y - distanceToSnap) / 2) * 2;
+        //        targetPositions[i] = new Vector3(symbols[i].transform.position.x, i * 2 * -1, symbols[i].transform.position.z);
+        //    }
+        //    else
+        //    {
+        //        targetPositions[i] = targetPosition; // The closest symbol goes to 0
+        //    }
+        //}
 
         // Smoothly move all symbols to their target positions
         float elapsedTime = 0f;
         while (elapsedTime < smoothMoveDuration)
         {
-            for (int i = 0; i < symbols.Count; i++)
+            foreach (var item in symbols)
             {
-                symbols[i].transform.position = Vector3.Lerp(symbols[i].transform.position, targetPositions[i], elapsedTime / smoothMoveDuration);
+                item.transform.position = Vector3.Lerp(item.transform.position, item.gameObject.GetComponent<SlotItem>().targetPosition, elapsedTime / smoothMoveDuration);
             }
+
             elapsedTime += Time.deltaTime;
             yield return null; // Wait for the next frame
         }
 
         // Ensure all symbols are exactly at their target positions after the movement
-        for (int i = 0; i < symbols.Count; i++)
+        foreach (var item in symbols)
         {
-            symbols[i].transform.position = targetPositions[i];
+            item.transform.position = item.gameObject.GetComponent<SlotItem>().targetPosition;
+            //item.gameObject.GetComponent<SlotItem>().targetPosition = Vector3.zero;
         }
+
         symbolsSnap = false;
     }
 
