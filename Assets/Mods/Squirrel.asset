@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39be3ca21c85ee44a99a2e7bab9d3893, type: 3}
-  m_Name: Mouse
+  m_Name: Squirrel
   m_EditorClassIdentifier: 
-  name: Mouse
+  name: Squirrel
   description: 
-  image: {fileID: 21300000, guid: df7bddb6834360c42987b1a29a6c76f8, type: 3}
-  prefab: {fileID: 3834957297376247015, guid: 477145b29f1dba44c999a2d3adab54b0, type: 3}
+  image: {fileID: 37730594, guid: be14e255cfa89104984c9fcabcebf518, type: 3}
+  prefab: {fileID: 3834957297376247015, guid: 79e4a2badc4c4be48942a711fa3e2cfe, type: 3}
