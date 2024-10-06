@@ -15,5 +15,5 @@ public class AdditionalSlot : SlotMod
         return "slot";
     }
 
-    public int INEEDMONEY(IEnumerable<SlotMod> mods) { return 0; }
+    public int INEEDMONEY(int score, Dictionary<Spot, AdditionalSlot> result) { return reward; }
 }

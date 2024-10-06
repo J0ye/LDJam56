@@ -13,6 +13,9 @@ public class ModShopElement : MonoBehaviour
     [SerializeField]
     Button button;
 
+    [SerializeField]
+    Image background;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +32,7 @@ public class ModShopElement : MonoBehaviour
     {
         _mod = mod;
         image.sprite = mod.image;
+        background.color = mod.color;
     }
 
     public SlotMod GetMod() => _mod;

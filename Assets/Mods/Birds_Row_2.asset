@@ -10,8 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d97793b281f27814dbeabf33abcdbccd, type: 3}
-  m_Name: X2_Birds_Anywhere
+  m_Name: Birds_Row_2
   m_EditorClassIdentifier: 
   name: Birds II
-  description: 'x2 to birds '
+  tinyText: X2
+  description: x2 to bird triple
   image: {fileID: 0}
+  color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  multiplicator: 2
+  specificSymbol: {fileID: 11400000, guid: 50a4ab3553b59304eb5ee60f6aeb44dd, type: 2}
