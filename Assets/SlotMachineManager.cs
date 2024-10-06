@@ -55,6 +55,7 @@ public class Spinning : StateBase
     public override void Enter()
     {
         base.Enter();
+        controller.PayCost();
         shuffleDurations[0] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[1] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[2] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
@@ -179,11 +180,12 @@ public class SlotMachineManager : MonoBehaviour
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
+    public int startingCost = 2;
     [Header ("UI")]
     public TMP_Text scoreText;
     private int _score = 3; // Backing field for score
 
-    public int score // Property for score
+    public int score 
     {
         get => _score;
         set
@@ -192,7 +194,17 @@ public class SlotMachineManager : MonoBehaviour
             scoreText.text = _score.ToString(); // Update the score text
         }
     }
-
+    public TMP_Text costText;
+    private int costToSpin = 0;
+    public int CostToSpin // Public property to access and set costToSpin
+    {
+        get => costToSpin;
+        set
+        {
+            costToSpin = value;
+            costText.text = costToSpin.ToString(); // Update the cost text
+        }
+    }
 
     public static SlotMachineManager Instance // Public property to access the instance
     {
@@ -224,6 +236,7 @@ public class SlotMachineManager : MonoBehaviour
         }
 
         score = 3;
+        CostToSpin = startingCost;
     }
 
     void Update()
@@ -248,5 +261,25 @@ public class SlotMachineManager : MonoBehaviour
         newState.previous = currentState;
         currentState = newState; // Change to the new state
         currentState.Enter(); // Call Enter on the new state
+    }
+
+    private int payCostCallCount = 0; // Counter for PayCost calls
+
+    public void PayCost()
+    {
+        payCostCallCount++; // Increment the call count
+        score -= costToSpin;
+
+        // Check if the method has been called three times
+        if (payCostCallCount >= 3)
+        {
+            CostToSpin += 1; // Increase CostToSpin by 3
+            payCostCallCount = 0; // Reset the counter
+        }
+    }
+
+    public bool ScoreBiggerCost()
+    {
+        return score > costToSpin;
     }
 }
