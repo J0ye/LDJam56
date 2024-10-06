@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Mouse
   description: 
-  image: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  image: {fileID: 21300000, guid: c38fa52b3758c5547b1501fb0c8fc221, type: 3}
   prefab: {fileID: 3834957297376247015, guid: 477145b29f1dba44c999a2d3adab54b0, type: 3}
