@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,15 @@ public class ModShopElement : MonoBehaviour
     [SerializeField]
     Image background;
 
+    [SerializeField]
+    TMP_Text shopName;
+
+    [SerializeField]
+    TMP_Text tinyText;
+
+    [SerializeField]
+    TMP_Text description;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,8 +41,31 @@ public class ModShopElement : MonoBehaviour
     public void Initialize(SlotMod mod)
     {
         _mod = mod;
-        image.sprite = mod.image;
+        if (mod.image != null)
+        {
+            image.sprite = mod.image;
+        }
+        else
+        {
+            image.enabled = false;
+        }
         background.color = mod.color;
+        shopName.text = mod.name;
+        description.text = mod.description;
+
+        if (!string.IsNullOrWhiteSpace(mod.tinyText))
+        {
+            tinyText.text = mod.tinyText;
+        }
+
+        if (mod is Multiplicator)
+        {
+            var mod2 = mod as Multiplicator;
+            //if (mod2.specifi)
+            //{
+                
+            //}
+        }
     }
 
     public SlotMod GetMod() => _mod;

@@ -29,8 +29,16 @@ public class ModInventoryElement : MonoBehaviour
     public void Initialize(SlotMod mod)
     {
         _mod = mod;
-        image.sprite = mod.image;
         GetComponent<Image>().color = mod.color;
+
+        if (mod.image != null)
+        {
+            image.sprite = mod.image;
+        }
+        else
+        {
+            image.enabled = false;
+        }
 
         if (!string.IsNullOrWhiteSpace(mod.tinyText))
         {

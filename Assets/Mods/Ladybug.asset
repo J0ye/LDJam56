@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Ladybug
   m_EditorClassIdentifier: 
   name: Ladybug
+  tinyText: 
   description: 
   image: {fileID: 1015721553, guid: 2755487a53e3d1847965a88d869bceeb, type: 3}
+  color: {r: 0.93333334, g: 0.9607843, b: 0.6745098, a: 1}
+  probability: 1
   prefab: {fileID: 3834957297376247015, guid: 79cb34b28b406754ebb53f64fa0636a5, type: 3}
+  reward: 1

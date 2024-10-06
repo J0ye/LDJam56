@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: Bird
   m_EditorClassIdentifier: 
   name: Bird
+  tinyText: 
   description: 
   image: {fileID: -1288124200, guid: 76505423f0c8ffa4693ae7c70a4ca5a2, type: 3}
+  color: {r: 0.9346393, g: 0.9622642, b: 0.67630833, a: 1}
+  probability: 1
   prefab: {fileID: 3834957297376247015, guid: dc3e26164f5c53544b8c946c2f0b6019, type: 3}
+  reward: 1
