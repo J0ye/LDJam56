@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,9 @@ public class ModShop : MonoBehaviour
 
     [SerializeField]
     Button refreshButton;
+
+    [Header("Values")]
+    public int rerollCost = 1;
 
     private int[] PROBABILITY_RATIOS = new int[4]
     {
@@ -43,12 +47,8 @@ public class ModShop : MonoBehaviour
     void Start()
     {
         GenerateRandomMods();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        UpdateRerollCostText();
     }
 
     public void GenerateRandomMods()
@@ -87,9 +87,9 @@ public class ModShop : MonoBehaviour
 
     public void RefreshShop()
     {
-        if (SlotMachineManager.Instance.score -1 > SlotMachineManager.Instance.CostToSpin)
+        if (SlotMachineManager.Instance.score -rerollCost > SlotMachineManager.Instance.CostToSpin)
         {
-            SlotMachineManager.Instance.score -= 1;
+            SlotMachineManager.Instance.score -= rerollCost;
             GenerateRandomMods();
         }
     }
@@ -122,19 +122,14 @@ public class ModShop : MonoBehaviour
         }
     }
 
-    //public void UpdateUI()
-    //{
-    //    // Delete all existing
-    //    foreach (Transform child in transform)
-    //    {
-    //        GameObject.Destroy(child.gameObject);
-    //    }
-
-    //    // Add all back
-    //    foreach (var mod in ModManager.instance.GetMods())
-    //    {
-    //        var modGridElement = Instantiate(_prefab, transform);
-    //        modGridElement.Initialize(mod);
-    //    }
-    //}
+    private void UpdateRerollCostText()
+    {
+        foreach(Transform child in refreshButton.transform)
+        {
+            if(child.TryGetComponent<TMP_Text>(out TMP_Text costText))
+            {
+                costText.text = rerollCost.ToString();
+            }
+        }
+    }
 }
