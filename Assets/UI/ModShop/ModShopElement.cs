@@ -26,6 +26,9 @@ public class ModShopElement : MonoBehaviour
     [SerializeField]
     TMP_Text description;
 
+    [SerializeField]
+    TMP_Text drawback;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +56,11 @@ public class ModShopElement : MonoBehaviour
         shopName.text = mod.name;
         description.text = mod.description;
 
+        if (mod.drawback > 0)
+        {
+            drawback.text = "+" + mod.drawback.ToString() + "cost";
+        }
+
         if (!string.IsNullOrWhiteSpace(mod.tinyText))
         {
             tinyText.text = mod.tinyText;
@@ -74,5 +82,6 @@ public class ModShopElement : MonoBehaviour
     {
         ModInventory.instance.AddMod(_mod);
         button.interactable = false;
+        SlotMachineManager.Instance.CostToSpin += _mod.drawback;
     }
 }
