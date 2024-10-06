@@ -162,6 +162,26 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: c68150779c9fc2949bc5b2d09878564c, type: 2}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: a8831771df132394e84d00e15703a17d, type: 2}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 4fcc58e9d72281b49a1268080feff7db, type: 2}
+    - target: {fileID: 7952762657282775929, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
+      propertyPath: _mods.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 50a4ab3553b59304eb5ee60f6aeb44dd, type: 2}
     - target: {fileID: 8859323753428412375, guid: 1751faf719c6b6b48be843f55289145e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -3299,6 +3319,8 @@ MonoBehaviour:
   - {fileID: 5118811611783703394}
   - {fileID: 5385069269650566032}
   - {fileID: 6442994142525413156}
+  shuffleTimeRange: {x: 1, y: 5}
+  shuffleIntervalSteps: 0.01
 --- !u!212 &7476119245389349972
 SpriteRenderer:
   m_ObjectHideFlags: 0

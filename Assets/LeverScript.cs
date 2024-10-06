@@ -43,11 +43,20 @@ public class LeverScript : MonoBehaviour
 
         while (elapsedTime < 1f)
         {
+            if(!isLeverDown)
+            {
+                break;
+            }
             transform.rotation = Quaternion.Slerp(startingRotation, targetRotation, elapsedTime);
             elapsedTime += Time.deltaTime * rotationSpeed;
             yield return null;
         }
-        onLeverPulledDown.Invoke();
+        
+        // Check if the lever is close to the target rotation before invoking the event
+        if (Quaternion.Angle(transform.rotation, targetRotation) < 1f) // Threshold of 1 degree
+        {
+            onLeverPulledDown.Invoke();
+        }
     }
 
     private IEnumerator SnapLeverBack()

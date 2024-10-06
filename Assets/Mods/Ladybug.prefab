@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1015721553, guid: 2755487a53e3d1847965a88d869bceeb, type: 3}
+    - target: {fileID: 2710883066902463160, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
+      propertyPath: m_SortingOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6117457374227765571, guid: e652874b3a4b2cb4281603e08a97bf34, type: 3}
       propertyPath: m_Name
       value: Ladybug
