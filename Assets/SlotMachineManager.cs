@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class StateBase
 {
@@ -119,7 +121,7 @@ public class Spinning : StateBase
 
         for (int i = 0; i < Mathf.Min(allSpots.Count, allGameObjects.Count); i++)
         {
-            controller.result.Add(allGameObjects[i].GetComponent<AdditionalSlot>(), allSpots[i]); // Assigning the spot's position to the result
+            controller.result.Add(allSpots[i], allGameObjects[i].GetComponent<AdditionalSlot>()); // Assigning the spot's position to the result
             allGameObjects[i].transform.position = allSpots[i].transform.position;
             allGameObjects[i].SetActive(true);
         }
@@ -137,8 +139,10 @@ public class CalculatingResults : StateBase
         var slots = ModInventory.instance.GetMods().Where(i => i.GetType() == "multiplicator").ToList();
         foreach(Multiplicator mult in slots)
         {
-            score += mult.INEEDMONEY(score, controller.result);
+            //score += mult.INEEDMONEY(score, controller.result);
         }
+
+
     }
 
     public override void Update()
@@ -161,10 +165,14 @@ public class SlotMachineManager : MonoBehaviour
 {
     private static SlotMachineManager instance; // Singleton instance
 
-    public Dictionary<AdditionalSlot, Spot> result = new Dictionary<AdditionalSlot, Spot>();
+    public Dictionary<Spot, AdditionalSlot> result = new Dictionary<Spot, AdditionalSlot>();
     public List<WheelSymbolManager> wheels = new List<WheelSymbolManager>();
     public Vector2 shuffleTimeRange = new Vector2(1f, 5f); // Minimum and maximum time for shuffling
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
+    [Header ("UI")]
+    public TMP_Text scoreText;
+    [HideInInspector]
+    public int score = 0;
 
 
     public static SlotMachineManager Instance // Public property to access the instance
