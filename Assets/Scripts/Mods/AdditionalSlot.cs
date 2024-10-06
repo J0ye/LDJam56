@@ -8,6 +8,8 @@ public class AdditionalSlot : SlotMod
 {
     public GameObject prefab;
 
+    public int reward = 1;
+
     public override string GetType()
     {
         return "slot";
