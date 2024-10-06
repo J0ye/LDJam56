@@ -32,12 +32,6 @@ public class ModInventory : MonoBehaviour
     {
         UpdateUI();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     
     /// <summary>
     /// Return all mods
@@ -48,7 +42,7 @@ public class ModInventory : MonoBehaviour
     public void AddMod(SlotMod mod)
     {
         _mods.Add(mod);
-        ModInventory.instance.UpdateUI();
+        instance.UpdateUI();
     }
 
     public void UpdateUI()
@@ -56,14 +50,24 @@ public class ModInventory : MonoBehaviour
         // Delete all existing
         foreach (Transform child in transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Destroy(child.gameObject);
         }
 
+        Dictionary<SlotMod, ModInventoryElement> modTypes = new Dictionary<SlotMod, ModInventoryElement>();
         // Add all back
         foreach (var mod in GetMods())
         {
             var modGridElement = Instantiate(_modGridElementPrefab, transform);
             modGridElement.Initialize(mod);
+            if(modTypes.ContainsKey(mod))
+            {
+                modGridElement.gameObject.SetActive(false);
+                modTypes[mod].UpdateCount(1);
+            }
+            else
+            {
+                modTypes.Add(mod, modGridElement);
+            }
         }
     }
 }

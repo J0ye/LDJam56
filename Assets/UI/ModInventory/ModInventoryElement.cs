@@ -14,17 +14,11 @@ public class ModInventoryElement : MonoBehaviour
     [SerializeField]
     TMP_Text text;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    TMP_Text ammountText;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    int count = 0;
+
 
     public void Initialize(SlotMod mod)
     {
@@ -44,7 +38,25 @@ public class ModInventoryElement : MonoBehaviour
         {
             text.text = mod.tinyText;
         }
+
+        gameObject.name = mod.name + " Mod";
     }
+    
+    public void UpdateCount(int amount)
+    {
+        count += amount;
+
+        // Clear text if count is less than or equal to 0
+        if (count <= 0)
+        {
+            ammountText.text = string.Empty;
+        }
+        else
+        {
+            ammountText.text = count.ToString();
+        }
+    }
+
 
     public SlotMod GetMod() => _mod;
 }

@@ -286,7 +286,7 @@ public class SlotMachineManager : MonoBehaviour
         {
             ChangeState(new Ready(this));
         }
-        else
+        else if(currentState is Ready)
         {
             ChangeState(new InShop(this));
         }
