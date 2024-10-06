@@ -25,8 +25,6 @@ public class ModInventory : MonoBehaviour
         {
             instance = this;
         }
-
-        gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update
