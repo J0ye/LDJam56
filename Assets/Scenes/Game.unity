@@ -29365,7 +29365,7 @@ MonoBehaviour:
   spins: 0
   modShopUI: {fileID: 166268408}
   scoreText: {fileID: 629384198}
-  acornSpeed: {x: 10, y: 20}
+  acornSpeed: {x: 17, y: 27}
   costText: {fileID: 1086059956}
 --- !u!212 &7476119245389349972
 SpriteRenderer:
