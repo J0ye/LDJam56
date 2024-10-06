@@ -29,6 +29,14 @@ public class ModShopElement : MonoBehaviour
     [SerializeField]
     TMP_Text drawback;
 
+    [SerializeField]
+    TMP_Text sold;
+
+    [SerializeField]
+    public TMP_Text cantAfford;
+
+    public bool isSold = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -83,6 +91,8 @@ public class ModShopElement : MonoBehaviour
         ModInventory.instance.AddMod(_mod);
         EnableButton(false);
         SlotMachineManager.Instance.CostToSpin += _mod.drawback;
+        isSold = true;
+        sold.enabled = true;
         ModShop.instance.CheckModCost();
     }
 

@@ -159,7 +159,12 @@ public class CalculatingResults : StateBase
             mult += multi.INEEDMONEY(score, controller.result);
             Debug.Log($"Current Score: {score}, Multiplicator Name: {multi.name}");
         }
-        
+
+        if (mult == 0)
+        {
+            mult = 1;
+        }
+
         controller.score += score*mult;
     }
 
