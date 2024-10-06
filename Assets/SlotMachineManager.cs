@@ -69,6 +69,7 @@ public class Spinning : StateBase
 
         foreach (WheelSymbolManager target in controller.wheels)
         {
+            target.StartAllParticleSystems();
             target.UpdateSymbols(); // Ensure symbols are updated when entering the spinning state
         }
     }
@@ -83,11 +84,15 @@ public class Spinning : StateBase
             if (shuffleTimers[i] < shuffleDurations[i])
             {
                 // Perform shuffle if the interval has been reached
-                if (shuffleTimers[i] >= controller.shuffleIntervalSteps)
+                if (shuffleTimers[i] >= shuffleIntervals[i])
                 {
                     ShuffleSymbols(controller.wheels[i]); // Shuffle the current wheel
                     shuffleIntervals[i] += controller.shuffleIntervalSteps; // Increment the interval timer
                 }
+            }
+            else
+            {
+                controller.wheels[i].StopAllParticleSystems();
             }
         }
 

@@ -9,12 +9,27 @@ public class WheelSymbolManager : MonoBehaviour
     public List<GameObject> spawnedSymbols = new List<GameObject>();
     [HideInInspector]
     public List<Spot> spots = new List<Spot>();
+    public List<ParticleSystem> particleEffects = new List<ParticleSystem>();
 
     void Start()
     {
         GenerateSymbols();
+
+        foreach (Transform child in transform)
+        {
+            if (child.childCount > 0)
+            {
+                foreach (Transform grandChild in child)
+                {
+                    if (grandChild.TryGetComponent<ParticleSystem>(out ParticleSystem particleSystem))
+                    {
+                        particleEffects.Add(particleSystem);
+                    }
+                }
+            }
+        }
     }
-    
+
     public void AddSpot(Spot spot)
     {
         spots.Add(spot);
@@ -38,7 +53,7 @@ public class WheelSymbolManager : MonoBehaviour
             var newSymbol = Instantiate(mod.prefab, Vector3.zero, Quaternion.identity, transform);
             newSymbol.GetComponent<SlotItem>().Initialize(mod);
             newSymbol.SetActive(false);
-            
+
             spawnedSymbols.Add(newSymbol);
         }
     }
@@ -50,5 +65,21 @@ public class WheelSymbolManager : MonoBehaviour
             Destroy(symbol); // Destroy each GameObject
         }
         spawnedSymbols.Clear(); // Clear the list
+    }
+
+    public void StartAllParticleSystems()
+    {
+        foreach (ParticleSystem particleSystem in particleEffects)
+        {
+            particleSystem.Play(); // Start each ParticleSystem
+        }
+    }
+
+    public void StopAllParticleSystems()
+    {
+        foreach (ParticleSystem particleSystem in particleEffects)
+        {
+            particleSystem.Stop(); // Stop each ParticleSystem
+        }
     }
 }
