@@ -9,6 +9,8 @@ public abstract class SlotMod : ScriptableObject
     public string description;
     public Sprite image;
     public Color color = Color.gray;
+
+    [Range(1, 5)]
     public int probability = 1;
     public int drawback = 1;
 

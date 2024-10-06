@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d97793b281f27814dbeabf33abcdbccd, type: 3}
-  m_Name: Birds_Row_3
+  m_Name: Squirrel_3_2
   m_EditorClassIdentifier: 
-  name: Birds III
-  tinyText: X4
-  description: x4 to bird triple
+  name: Squirrel II
+  tinyText: X2
+  description: x2 to squirrel triple
   image: {fileID: 0}
-  color: {r: 0.8117647, g: 0.6627451, b: 0.34901962, a: 1}
-  probability: 5
-  drawback: 5
-  multiplicator: 4
-  specificSymbol: {fileID: 11400000, guid: 50a4ab3553b59304eb5ee60f6aeb44dd, type: 2}
+  color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  probability: 4
+  drawback: 3
+  multiplicator: 2
+  specificSymbol: {fileID: 11400000, guid: c68150779c9fc2949bc5b2d09878564c, type: 2}

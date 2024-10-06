@@ -17,7 +17,7 @@ MonoBehaviour:
   description: 
   image: {fileID: 21300000, guid: df7bddb6834360c42987b1a29a6c76f8, type: 3}
   color: {r: 0.93333334, g: 0.9607843, b: 0.6745098, a: 1}
-  probability: 1
+  probability: 2
   drawback: 1
   prefab: {fileID: 3834957297376247015, guid: 477145b29f1dba44c999a2d3adab54b0, type: 3}
   reward: 2
