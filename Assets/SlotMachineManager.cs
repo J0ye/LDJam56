@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class StateBase
 {
@@ -146,7 +147,6 @@ public class Spinning : StateBase
 
 public class CalculatingResults : StateBase
 {
-    private List<GameObject> spawnedAcorns = new List<GameObject>(); // New list to hold spawned acorns
     private Vector3 targetPosition; // Target position for acorns
 
     private int score = 0;
@@ -183,29 +183,16 @@ public class CalculatingResults : StateBase
         targetPosition = new Vector3(12, 6, 0);
 
         // Spawn acorns for each point scored
-        int t = 0;
-        for (int i = 0; i < score; i++)
-        {
-            GameObject acorn = Object.Instantiate(controller.acornPrefab); // Spawn acorn
-            spawnedAcorns.Add(acorn); // Add to the list
-
-            Vector3 wheelPosition = controller.wheels[t].transform.position; // Get the wheel's position
-            acorn.transform.position = wheelPosition + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0); // Add random offset
-            acorn.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f)); // Set random rotation around z-axis
-            t++;
-            if(t >= controller.wheels.Count)
-            {
-                t = 0;
-            }
-        }
+        SlotMachineManager.Instance.SpawnAcorns(score);
     }
+
 
     public override void Update()
     {
         // Move each acorn towards the target position
-        for (int i = spawnedAcorns.Count - 1; i >= 0; i--)
+        for (int i = controller.spawnedAcorns.Count - 1; i >= 0; i--)
         {
-            GameObject acorn = spawnedAcorns[i];
+            GameObject acorn = controller.spawnedAcorns[i];
             if (acorn != null)
             {
                 // Move the acorn towards the target position
@@ -215,13 +202,11 @@ public class CalculatingResults : StateBase
                 if (Vector3.Distance(acorn.transform.position, targetPosition) < 0.1f)
                 {
                     Object.Destroy(acorn); // Destroy the acorn when it reaches the target
-                    spawnedAcorns.RemoveAt(i); // Remove from the list
+                    controller.spawnedAcorns.RemoveAt(i); // Remove from the list
 
-                    if (spawnedAcorns.Count <= 0)
+                    if (controller.spawnedAcorns.Count <= 0)
                     {
-
                         controller.ChangeState(new Ready(controller));
-
                     }
                 }
             }
@@ -316,6 +301,8 @@ public class SlotMachineManager : MonoBehaviour
     public TMP_Text scoreText;
     public Vector2 acornSpeed = new Vector2(5f, 15f);
     private int _score = 3; // Backing field for score
+
+    public List<GameObject> spawnedAcorns = new List<GameObject>(); // New list to hold spawned acorns
 
     public int score
     {
@@ -421,5 +408,33 @@ public class SlotMachineManager : MonoBehaviour
     public bool ScoreBiggerCost()
     {
         return score >= costToSpin;
+    }
+
+
+    public void SpawnAcorns(int score)
+    {
+        // Spawn acorns for each point scored
+        int t = 0;
+        for (int i = 0; i < score; i++)
+        {
+            StartCoroutine(SpawnAcornEnumerator(t, i * 0.08f));
+            t++;
+            if (t >= wheels.Count)
+            {
+                t = 0;
+            }
+        }
+    }
+
+    IEnumerator SpawnAcornEnumerator(int t, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        GameObject acorn = Object.Instantiate(acornPrefab); // Spawn acorn
+        spawnedAcorns.Add(acorn); // Add to the list
+
+        Vector3 wheelPosition = wheels[t].transform.position; // Get the wheel's position
+        acorn.transform.position = wheelPosition + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0); // Add random offset
+        acorn.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f)); // Set random rotation around z-axis
     }
 }
