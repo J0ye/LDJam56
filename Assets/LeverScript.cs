@@ -23,6 +23,7 @@ public class LeverScript : MonoBehaviour
         {
             isLeverDown = true;
             StartCoroutine(RotateLever());
+            GetComponent<AudioSource>().Play();
         }
     }
 

@@ -76,6 +76,7 @@ public class Spinning : StateBase
         {
             target.StartAllParticleSystems();
             target.UpdateSymbols(); // Ensure symbols are updated when entering the spinning state
+            controller.GetComponent<AudioSource>().Play();
         }
     }
 
@@ -107,6 +108,7 @@ public class Spinning : StateBase
             shuffleTimers[2] >= shuffleDurations[2])
         {
             controller.ChangeState(new CalculatingResults(controller)); // Change state after all shuffles
+            controller.GetComponent<AudioSource>().Stop();
         }
     }
 
