@@ -109,6 +109,7 @@ public class Spinning : StateBase
         {
             controller.ChangeState(new CalculatingResults(controller)); // Change state after all shuffles
             controller.GetComponent<AudioSource>().Stop();
+            controller.GetComponent<AudioSource>().PlayOneShot(controller.spinEndAudioClip);
         }
     }
 
@@ -297,6 +298,7 @@ public class SlotMachineManager : MonoBehaviour
     public int startingScore = 3;
     public int spinCostIncreasesAfter = 3;
     public int spins = 0;
+    public AudioClip spinEndAudioClip;
 
     [Header("UI")]
     public GameObject modShopUI;
