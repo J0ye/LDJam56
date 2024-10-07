@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: 2 Same
   m_EditorClassIdentifier: 
   name: 2 Equals
-  tinyText: 
+  tinyText: x2
   description: 
   image: {fileID: 0}
   color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   probability: 1
   drawback: 0
-  multiplicator: 2
+  multiplicator: 4
   specificSymbol: {fileID: 0}

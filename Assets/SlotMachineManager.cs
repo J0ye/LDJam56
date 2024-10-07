@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using UnityEditor;
 
 public class StateBase
 {
@@ -40,7 +41,8 @@ public class Ready : StateBase
 
     public override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        Debug.Log("Is Ready");
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             controller.ChangeState(new Spinning(controller));
         }
@@ -59,7 +61,6 @@ public class Spinning : StateBase
         base.Enter();
         controller.PayCost();
         controller.spins++;
-        ModShop.instance.GenerateRandomMods();
         PlayerPrefs.SetInt("Spins", controller.spins);
         shuffleDurations[0] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
         shuffleDurations[1] = Random.Range(controller.shuffleTimeRange.x, controller.shuffleTimeRange.y);
@@ -187,6 +188,8 @@ public class CalculatingResults : StateBase
 
         // Spawn acorns for each point scored
         SlotMachineManager.Instance.SpawnAcorns(score);
+        controller.roundScoreText.text = "+" + (score*mult);
+        controller.roundScoreText.gameObject.SetActive(true);
     }
 
 
@@ -209,6 +212,7 @@ public class CalculatingResults : StateBase
 
                     if (controller.spawnedAcorns.Count <= 0)
                     {
+                        Debug.Log("Acorns destroyed. Going to Ready state");
                         controller.ChangeState(new Ready(controller));
                     }
                 }
@@ -218,7 +222,13 @@ public class CalculatingResults : StateBase
 
     public override void Exit()
     {
+        Debug.Log("Calculating score");
         controller.score += score * mult;
+        Debug.Log("Deactivating text");
+        controller.roundScoreText.gameObject.SetActive(false);
+        Debug.Log("Refreshing shop");
+        ModShop.instance.GenerateRandomMods();
+        Debug.Log("Checking if end");
         if (!controller.ScoreBiggerCost())
         {
             SceneManager.LoadScene("End");
@@ -234,6 +244,15 @@ public class InShop : StateBase
     {
         base.Enter();
         controller.modShopUI.SetActive(true);
+        if(PlayerPrefs.GetInt("Tutorial") >= 2)
+        {
+            controller.shopTutorialUI.SetActive(false);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("Tutorial", 2);
+            controller.shopTutorialUI.SetActive(true);
+        }
     }
 
     public override void Exit()
@@ -254,6 +273,7 @@ public class SetUp : StateBase
     public override void Enter()
     {
         base.Enter();
+        controller.tutorialUI.SetActive(false);
         targetPosition = new Vector3(0, 0, -8);
         elapsedTime = 0f;
         isAnimating = true;
@@ -271,9 +291,42 @@ public class SetUp : StateBase
             {
                 Camera.main.transform.position = targetPosition; // Ensure the final position is set
                 isAnimating = false; // Stop the animation
-                controller.ChangeState(new Ready(controller));
+                Debug.Log("Tutorial" + PlayerPrefs.GetInt("Tutorial"));
+                if(PlayerPrefs.GetInt("Tutorial") > 0)
+                {
+                    controller.ChangeState(new Ready(controller));
+                }
+                else
+                {
+                    controller.ChangeState(new TutorialState(controller));
+                }
             }
         }
+    }
+}
+
+public class TutorialState : StateBase
+{
+    public TutorialState(SlotMachineManager controller) : base(controller) { }
+
+    public override void Enter()
+    {
+        base.Enter();
+        controller.tutorialUI.SetActive(true);
+    }
+
+    public override void Update()
+    {
+        if(Input.anyKeyDown)
+        {
+            controller.tutorialUI.SetActive(false);
+            controller.ChangeState(new Ready(controller));
+        }
+    }
+
+    public override void Exit()
+    {
+        PlayerPrefs.SetInt("Tutorial", 1);
     }
 }
 
@@ -296,13 +349,17 @@ public class SlotMachineManager : MonoBehaviour
     public float shuffleIntervalSteps = 3; // Number of steps for shuffle intervals
     public int startingCost = 2;
     public int startingScore = 3;
+    public float spinCostIncreasesBy = 4;
     public int spinCostIncreasesAfter = 3;
     public int spins = 0;
     public AudioClip spinEndAudioClip;
 
     [Header("UI")]
     public GameObject modShopUI;
+    public GameObject tutorialUI;
+    public GameObject shopTutorialUI;
     public TMP_Text scoreText;
+    public TMP_Text roundScoreText;
     public Vector2 acornSpeed = new Vector2(5f, 15f);
     private int _score = 3; // Backing field for score
 
@@ -355,7 +412,6 @@ public class SlotMachineManager : MonoBehaviour
 
         score = startingScore;
         CostToSpin = startingCost;
-        modShopUI.SetActive(false);
     }
 
     void Update()
@@ -404,7 +460,7 @@ public class SlotMachineManager : MonoBehaviour
         // Check if the method has been called three times
         if (payCostCallCount >= spinCostIncreasesAfter)
         {
-            CostToSpin += 1; // Increase CostToSpin by 3
+            CostToSpin += (int)(spins * spinCostIncreasesBy);
             payCostCallCount = 0; // Reset the counter
         }
     }

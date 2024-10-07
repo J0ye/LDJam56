@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: ThreeInARow
   m_EditorClassIdentifier: 
   name: Three in a Row
-  tinyText: X3
-  description: x2 to bird triple
+  tinyText: x3
+  description: 
   image: {fileID: 0}
   color: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   probability: 1
   drawback: 0
-  multiplicator: 3
+  multiplicator: 9
   specificSymbol: {fileID: 0}

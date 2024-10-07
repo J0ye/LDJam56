@@ -23,24 +23,25 @@ public class ModShop : MonoBehaviour
 
     private int[] PROBABILITY_RATIOS = new int[4]
     {
-        60,
-        30,
-        13,
-        7
+        55,
+        20,
+        15,
+        10
     };
 
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
-
         if (instance != null && instance != this)
         {
             Destroy(this);
         }
         else
         {
+            Debug.Log("Shop is here");
             instance = this;
         }
+        transform.parent.gameObject.SetActive(false);
     }
 
     // Start is called before the first frame update
@@ -56,13 +57,18 @@ public class ModShop : MonoBehaviour
         //Delete all existing
         foreach (Transform child in transform)
         {
-            GameObject.Destroy(child.gameObject);
+            Debug.Log("Destroiny shop element " + child.gameObject.name);
+            Destroy(child.gameObject);
         }
 
         for (int i = 0; i < 5; i++)
         {
+            Debug.Log("Making new rando mod");
             var slotMod = GetRandomMod();
+            
+            Debug.Log("spawning with prefab " + _prefab.name);
             var modShopElement = Instantiate(_prefab, transform);
+            Debug.Log("Init");
             modShopElement.Initialize(slotMod);
         }
 
@@ -106,20 +112,28 @@ public class ModShop : MonoBehaviour
 
     public void CheckModCost()
     {
+        // Iterate through each child in the ModShop transform
         foreach (Transform child in transform)
         {
+            // Get the ModShopElement component from the child
             var el = child.gameObject.GetComponent<ModShopElement>();
+            // Retrieve the cost of the mod
             int cost = el.GetMod().drawback;
 
+            // Check if the mod is not sold
             if (!el.isSold)
-            {
+            {                
+                Debug.Log($"Score: {SlotMachineManager.Instance.score}, Cost: {cost}, CostToSpin: {SlotMachineManager.Instance.CostToSpin}");
+                // Check if the player can afford the mod
                 if (SlotMachineManager.Instance.score - cost >= SlotMachineManager.Instance.CostToSpin)
                 {
+                    // Player can afford the mod, enable the button
                     el.cantAfford.enabled = false;
                     el.EnableButton(true);
                 }
                 else
                 {
+                    // Player cannot afford the mod, disable the button
                     el.cantAfford.enabled = true;
                     el.EnableButton(false);
                 }
